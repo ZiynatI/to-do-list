@@ -20,7 +20,9 @@ public class Task {
 
     private String description;
 
+    @Enumerated(EnumType.STRING)
     private TaskStatus status;
+
     @CreatedDate
     private Date dateCreated;
 

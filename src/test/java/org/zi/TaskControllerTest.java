@@ -89,7 +89,7 @@ public class TaskControllerTest {
         HttpEntity<Task> entity = new HttpEntity<>(task1, headers);
         ResponseEntity<Task> response = restTemplate.exchange(makeLocalUrl("tasks"), HttpMethod.POST,
                 entity, Task.class);
-        Task task2 = new Task("NewTest", "NewDescription", TaskStatus.NEW);
+        Task task2 = new Task("NewTest", "NewDescription", TaskStatus.DONE);
         HttpEntity<Task> entity2 = new HttpEntity<>(task2, headers);
         ResponseEntity<Task> response2 = restTemplate.exchange(makeLocalUrl("tasks/1"), HttpMethod.PUT,
                 entity2, Task.class);
