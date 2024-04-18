@@ -7,6 +7,12 @@
 <body>
 <p>
     <span th:text="${hello}">Hello!</span>
+    <table>
+        <tr th:each="task: ${tasks}">
+            <td th:text="${task.id}" />
+            <td th:text="${task.name}" />
+        </tr>
+    </table>
 </p>
 </body>
 </html>

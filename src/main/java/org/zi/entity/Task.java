@@ -20,8 +20,7 @@ public class Task {
 
     private String description;
 
-    private String status; // TODO
-
+    private TaskStatus status;
     @CreatedDate
     private Date dateCreated;
 
@@ -31,7 +30,7 @@ public class Task {
     protected Task() {
     }
 
-    public Task(String name, String description, String status) {
+    public Task(String name, String description, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.status = status;

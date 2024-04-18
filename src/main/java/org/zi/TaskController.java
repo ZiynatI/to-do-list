@@ -1,43 +1,44 @@
 package org.zi;
 
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.zi.dao.TaskDao;
 import org.zi.entity.Task;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class TaskController {
-    @Autowired
-    NamedParameterJdbcTemplate jdbcTemplate;
 
     @Autowired
     TaskDao taskDao;
 
-    @GetMapping("tasks")
-    List<Task> getAllTasks() {
-        var result = new ArrayList<Task>();
-        for (var task : taskDao.findAll()) {
-            result.add(task);
-        }
-        return result;
-    }
-
-    @DeleteMapping ("tasks/{id}")
-    void deleteTaskById(@PathVariable Long id) {
-        taskDao.deleteById(id);
-    }
-
-    @RequestMapping("/")
-    String hello() {
-        Task task = new Task("newTask", "desc", "new");
+    @PostMapping("tasks")
+    Task createTask(@RequestBody Task task) {
         taskDao.save(task);
-        System.out.println("List: " + taskDao.findByName("newTask"));
-        return "Hello World!";
+        return task;
+    }
+
+    @GetMapping("tasks")
+    List<Task> getAll() {
+        return taskDao.findAll();
+    }
+
+    @GetMapping("tasks/{id}")
+    Optional<Task> getById(@PathVariable Long id) {
+        return taskDao.findById(id);
+    }
+
+    @PutMapping("tasks/{id}")
+    Task update(@PathVariable Long id, @RequestBody Task task) {
+        task.setId(id);
+        taskDao.save(task);
+        return task;
+    }
+
+    @DeleteMapping("tasks/{id}")
+    void delete(@PathVariable Long id) {
+        taskDao.deleteById(id);
     }
 }
