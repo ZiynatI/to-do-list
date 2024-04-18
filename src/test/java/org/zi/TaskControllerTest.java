@@ -28,10 +28,7 @@ public class TaskControllerTest {
     TestRestTemplate restTemplate = new TestRestTemplate();
     HttpHeaders headers = new HttpHeaders();
     @LocalServerPort
-    private int port;
-
-    @Autowired
-    private TaskDao taskDao;
+    int port;
 
     @Test
     public void testCreateTask() {
