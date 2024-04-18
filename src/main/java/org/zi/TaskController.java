@@ -1,7 +1,9 @@
 package org.zi;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.zi.dao.TaskDao;
 import org.zi.entity.Task;
 
@@ -31,8 +33,15 @@ public class TaskController {
     }
 
     @PutMapping("tasks/{id}")
-    Task update(@PathVariable Long id, @RequestBody Task task) {
-        task.setId(id);
+    Task update(@PathVariable Long id, @RequestBody Task updatedTask) {
+        var taskOption = taskDao.findById(id);
+        if (taskOption.isEmpty()) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(404),"Task not found");
+        }
+        var task=taskOption.get();
+        task.setName(updatedTask.getName());
+        task.setDescription(updatedTask.getDescription());
+        task.setStatus(updatedTask.getStatus());
         taskDao.save(task);
         return task;
     }

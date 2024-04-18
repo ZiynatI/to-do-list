@@ -14,7 +14,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.zi.dao.TaskDao;
 import org.zi.entity.Task;
 import org.zi.entity.TaskStatus;
 
@@ -33,10 +32,9 @@ public class TaskControllerTest {
     @Test
     public void testCreateTask() {
         Task task = new Task("Test", "Test Description", TaskStatus.NEW);
-        HttpEntity<Task> entity = new HttpEntity<>(task, headers);
 
         ResponseEntity<Task> response = restTemplate.exchange(makeLocalUrl("tasks"), HttpMethod.POST,
-                entity, Task.class);
+                new HttpEntity<>(task, headers), Task.class);
         assertTrue(response.getStatusCode().is2xxSuccessful(), response.toString());
 
         Task responseTask = response.getBody();
@@ -50,20 +48,26 @@ public class TaskControllerTest {
     public void testGetAll() {
         Task task1 = new Task("Test1", "Test Description 1", TaskStatus.NEW);
         Task task2 = new Task("Test2", "Test Description 2", TaskStatus.NEW);
-        HttpEntity<Task> entity = new HttpEntity<>(task1, headers);
-        ResponseEntity<Task> response = restTemplate.exchange(makeLocalUrl("tasks"), HttpMethod.POST,
-                entity, Task.class);
-        HttpEntity<Task> entity2 = new HttpEntity<>(task2, headers);
-        ResponseEntity<Task> response2 = restTemplate.exchange(makeLocalUrl("tasks"), HttpMethod.POST,
-                entity2, Task.class);
-        HttpEntity<Task> entity3 = new HttpEntity<>(null, headers);
-        ResponseEntity<Task[]> response3 = restTemplate.exchange(makeLocalUrl("tasks"), HttpMethod.GET,
-                entity3, (Task[].class));
-        assertNotNull(response3);
-        assertEquals(2, Objects.requireNonNull(response3.getBody()).length);
-        assertEquals(task1.getName(), response3.getBody()[0].getName());
-        assertEquals(task2.getName(), response3.getBody()[1].getName());
-        assertEquals(task1.getDescription(), response3.getBody()[0].getDescription());
+        {
+            ResponseEntity<Task> response = restTemplate.exchange(makeLocalUrl("tasks"), HttpMethod.POST,
+                    new HttpEntity<>(task1, headers), Task.class);
+            assertTrue(response.getStatusCode().is2xxSuccessful(), response.toString());
+        }
+        {
+            ResponseEntity<Task> response = restTemplate.exchange(makeLocalUrl("tasks"), HttpMethod.POST,
+                    new HttpEntity<>(task2, headers), Task.class);
+            assertTrue(response.getStatusCode().is2xxSuccessful(), response.toString());
+        }
+        {
+            ResponseEntity<Task[]> response = restTemplate.exchange(makeLocalUrl("tasks"), HttpMethod.GET,
+                    new HttpEntity<>(null, headers), (Task[].class));
+            assertNotNull(response);
+            Task[] tasks = response.getBody();
+            assertEquals(2, Objects.requireNonNull(tasks).length);
+            assertEquals(task1.getName(), tasks[0].getName());
+            assertEquals(task2.getName(), tasks[1].getName());
+            assertEquals(task1.getDescription(), tasks[0].getDescription());
+        }
     }
 
     @Test
